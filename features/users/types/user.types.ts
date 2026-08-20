@@ -1,0 +1,45 @@
+export interface Student {
+  _id: string;
+  email: string;
+  name: string;
+  username: string;
+  role: "user";
+  coins: number;
+  gradeLevel: number;
+  section: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface StudentsPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface StudentsResponse {
+  data: Student[];
+  pagination: StudentsPagination;
+}
+
+export interface StudentQuery {
+  search?: string;
+  gradeLevel?: number;
+  section?: string;
+  page?: number;
+  limit?: number;
+  sortBy?:
+    | "name"
+    | "username"
+    | "email"
+    | "gradeLevel"
+    | "section"
+    | "coins"
+    | "created_at"
+    | "updated_at";
+  sortOrder?: "asc" | "desc";
+}
