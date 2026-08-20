@@ -61,3 +61,29 @@ export interface UpdateStudentData {
   section?: string;
   password?: string;
 }
+
+export type MapProgress = {
+  type: "level" | "tutorial" | "knowledge_check";
+  level?: number;
+  score?: number;
+  date_acquired: string;
+};
+
+export type UserMap = {
+  _id: string;
+  user_id: string;
+  name: string;
+  rank: number;
+  progress: MapProgress[];
+  created_at: string;
+  updated_at: string;
+};
+
+export interface VerifyUserResponse {
+  message: string;
+  user_info: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}

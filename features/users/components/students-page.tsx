@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
+  Eye,
   Loader2,
   Search,
   Users,
@@ -320,12 +321,9 @@ export default function StudentsPage() {
                     >
                       {/* Student */}
                       <TableCell>
-                        <Link
-                          href={`/teacher/students/${student._id}`}
-                          className="font-medium hover:underline"
-                        >
+                        <div className="font-medium">
                           {student.name}
-                        </Link>
+                        </div>
                       </TableCell>
 
                       {/* Username */}
@@ -377,18 +375,35 @@ export default function StudentsPage() {
                       </TableCell>
 
                       {/* Actions */}
-                      <TableCell className="text-right">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() =>
-                            handleManageStudent(
-                              student,
-                            )
-                          }
-                        >
-                          Manage
-                        </Button>
+                      <TableCell>
+                        <div className="flex items-center justify-end gap-2">
+                          {/* View */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                          >
+                            <Link
+                              href={`/teacher/students/${student._id}`}
+                              className="flex items-center justify-center"
+                            >
+                              <Eye className="mr-2 size-4" />
+                              View
+                            </Link>
+                          </Button>
+
+                          {/* Manage */}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleManageStudent(
+                                student,
+                              )
+                            }
+                          >
+                            Manage
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
