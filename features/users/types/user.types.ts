@@ -43,3 +43,21 @@ export interface StudentQuery {
     | "updated_at";
   sortOrder?: "asc" | "desc";
 }
+
+export interface RegisterStudentRequest {
+  name: string;
+  username: string;
+  password: string;
+  section: string;
+  gradeLevel: number;
+  email?: string;
+}
+
+export interface UpdateStudentData {
+  name?: string;
+  username?: string;
+  email?: string;
+  gradeLevel?: number;
+  section?: string;
+  password?: string;
+}
