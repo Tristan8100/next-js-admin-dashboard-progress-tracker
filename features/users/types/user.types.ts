@@ -87,3 +87,26 @@ export interface VerifyUserResponse {
     email: string;
   };
 }
+
+export interface User {
+  _id: string;
+  name: string;
+  username: string;
+  email?: string | null;
+  role: "admin" | "user";
+  coins: number;
+  gradeLevel: number;
+  section: string;
+  email_verified_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateUserPayload {
+  name?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+  gradeLevel?: number;
+  section?: string;
+}
