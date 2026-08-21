@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/features/auth/hooks/use-auth"
 
 const NAV_ITEMS = [
   {
@@ -310,6 +311,18 @@ export default function TeacherLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  //will act as a middleware
+  const { isChecking } = useAuth("admin")
+
+  if (isChecking) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        loading...
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen">
       <TopNav />
