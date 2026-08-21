@@ -51,3 +51,23 @@ export interface SendOtpRequest {
 export interface SendOtpResponse {
   message: string;
 }
+
+export interface SendOtpPayload {
+  email: string;
+}
+
+export interface VerifyResetCodePayload {
+  email: string;
+  otp: string;
+}
+
+export interface ResetPasswordPayload {
+  email: string;
+  token: string;
+  password: string;
+}
+
+export interface PasswordResetResponse {
+  message: string;
+  token?: string;
+}

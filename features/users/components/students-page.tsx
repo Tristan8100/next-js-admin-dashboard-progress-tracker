@@ -8,6 +8,7 @@ import {
   Eye,
   Loader2,
   Search,
+  Settings2,
   Users,
 } from "lucide-react";
 
@@ -17,12 +18,7 @@ import { StudentQuery } from "../types/user.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 import {
   Select,
@@ -32,30 +28,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
 import { Badge } from "@/components/ui/badge";
 
 import RegisterStudentDialog from "./register-student-dialog";
 import StudentDialog from "./edit-student-dialog";
 import { getApiErrorMessage } from "@/lib/api-error";
 
+/**
+ * Some records store section as "A" and some as "Section A"
+ * (legacy import vs. manual entry). Normalize at render time
+ * so the badge is always consistent, e.g. "Section A".
+ */
+function formatSection(section: string | undefined | null) {
+  if (!section) return "—";
+  const trimmed = section.trim();
+  return trimmed.toLowerCase().startsWith("section")
+    ? trimmed
+    : `Section ${trimmed}`;
+}
+
 export default function StudentsPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const [gradeLevel, setGradeLevel] =
-    useState<string>("all");
-
-  const [section, setSection] =
-    useState<string>("all");
+  const [gradeLevel, setGradeLevel] = useState("all");
+  const [section, setSection] = useState("all");
 
   const [page, setPage] = useState(1);
 
@@ -65,9 +62,6 @@ export default function StudentsPage() {
   const [studentDialogOpen, setStudentDialogOpen] =
     useState(false);
 
-  /*
-   * Debounce server-side search
-   */
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -77,9 +71,6 @@ export default function StudentsPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  /*
-   * Query sent to the backend
-   */
   const query: StudentQuery = {
     page,
     limit: 10,
@@ -113,27 +104,6 @@ export default function StudentsPage() {
   const students = data?.data ?? [];
   const pagination = data?.pagination;
 
-  /*
-   * Handlers
-   */
-  const handleSearch = (value: string) => {
-    setSearch(value);
-  };
-
-  const handleGradeChange = (
-    value: string | null,
-  ) => {
-    setGradeLevel(value ?? "all");
-    setPage(1);
-  };
-
-  const handleSectionChange = (
-    value: string | null,
-  ) => {
-    setSection(value ?? "all");
-    setPage(1);
-  };
-
   const handleManageStudent = (
     student: (typeof students)[number],
   ) => {
@@ -144,7 +114,7 @@ export default function StudentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
             Students
@@ -155,7 +125,7 @@ export default function StudentsPage() {
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-4 sm:justify-end">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Users className="size-4" />
 
@@ -171,28 +141,31 @@ export default function StudentsPage() {
       {/* Filters */}
       <Card>
         <CardContent className="p-4">
-          <div className="flex flex-col gap-3 md:flex-row">
-            {/* Search */}
+          <div className="flex items-center gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
               <Input
-                placeholder="Search by name, username, or email..."
+                placeholder="Search by name or username..."
                 value={search}
-                onChange={(event) =>
-                  handleSearch(event.target.value)
-                }
+                onChange={(event) => {
+                  setSearch(event.target.value);
+                }}
                 className="pl-9"
               />
             </div>
 
-            {/* Grade */}
             <Select
               value={gradeLevel}
-              onValueChange={handleGradeChange}
+              onValueChange={(value) => {
+                if (value === null) return;
+
+                setGradeLevel(value);
+                setPage(1);
+              }}
             >
-              <SelectTrigger className="w-full md:w-[160px]">
-                <SelectValue placeholder="Grade level" />
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
               </SelectTrigger>
 
               <SelectContent>
@@ -214,13 +187,17 @@ export default function StudentsPage() {
               </SelectContent>
             </Select>
 
-            {/* Section */}
             <Select
               value={section}
-              onValueChange={handleSectionChange}
+              onValueChange={(value) => {
+                if (value === null) return;
+
+                setSection(value);
+                setPage(1);
+              }}
             >
-              <SelectTrigger className="w-full md:w-[160px]">
-                <SelectValue placeholder="Section" />
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
               </SelectTrigger>
 
               <SelectContent>
@@ -228,238 +205,151 @@ export default function StudentsPage() {
                   All sections
                 </SelectItem>
 
-                {["A", "B", "C", "D"].map(
-                  (value) => (
-                    <SelectItem
-                      key={value}
-                      value={value}
-                    >
-                      Section {value}
-                    </SelectItem>
-                  ),
-                )}
+                {["A", "B", "C", "D"].map((value) => (
+                  <SelectItem
+                    key={value}
+                    value={value}
+                  >
+                    Section {value}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {/* Student Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">
-            Student List
-          </CardTitle>
-        </CardHeader>
+      {/* Student Cards */}
+      {isLoading ? (
+        <div className="flex h-48 items-center justify-center">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : isError ? (
+        <div className="flex h-48 items-center justify-center">
+          <p className="text-sm text-destructive">
+            {getApiErrorMessage(error)}
+          </p>
+        </div>
+      ) : students.length === 0 ? (
+        <div className="flex h-48 flex-col items-center justify-center gap-2 rounded-lg border border-dashed">
+          <Users className="size-8 text-muted-foreground" />
 
-        <CardContent className="p-0">
-          {/* Loading */}
-          {isLoading ? (
-            <div className="flex h-64 items-center justify-center">
-              <Loader2 className="size-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : isError ? (
-            /* Error */
-            <div className="flex h-64 items-center justify-center">
-              <p className="text-sm text-destructive">
-                {getApiErrorMessage(error)}
-              </p>
-            </div>
-          ) : students.length === 0 ? (
-            /* Empty */
-            <div className="flex h-64 flex-col items-center justify-center gap-2">
-              <Users className="size-8 text-muted-foreground" />
+          <p className="font-medium">
+            No students found
+          </p>
 
-              <p className="font-medium">
-                No students found
-              </p>
-
-              <p className="text-sm text-muted-foreground">
-                Try adjusting your search or filters.
-              </p>
-            </div>
-          ) : (
-            /* Table */
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>
-                      Student
-                    </TableHead>
-
-                    <TableHead>
-                      Username
-                    </TableHead>
-
-                    <TableHead>
-                      Grade
-                    </TableHead>
-
-                    <TableHead>
-                      Section
-                    </TableHead>
-
-                    <TableHead>
-                      Coins
-                    </TableHead>
-
-                    <TableHead>
-                      Email
-                    </TableHead>
-
-                    <TableHead className="text-right">
-                      Actions
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                  {students.map((student) => (
-                    <TableRow
-                      key={student._id}
-                    >
-                      {/* Student */}
-                      <TableCell>
-                        <div className="font-medium">
-                          {student.name}
-                        </div>
-                      </TableCell>
-
-                      {/* Username */}
-                      <TableCell className="text-muted-foreground">
-                        @{student.username}
-                      </TableCell>
-
-                      {/* Grade */}
-                      <TableCell>
-                        Grade {student.gradeLevel}
-                      </TableCell>
-
-                      {/* Section */}
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {student.section}
-                        </Badge>
-                      </TableCell>
-
-                      {/* Coins */}
-                      <TableCell>
-                        {student.coins}
-                      </TableCell>
-
-                      {/* Email */}
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <span className="max-w-[220px] truncate">
-                            {student.email ||
-                              "No email"}
-                          </span>
-
-                          {student.email_verified_at ? (
-                            <Badge
-                              variant="outline"
-                              className="shrink-0"
-                            >
-                              Verified
-                            </Badge>
-                          ) : (
-                            <Badge
-                              variant="secondary"
-                              className="shrink-0"
-                            >
-                              Unverified
-                            </Badge>
-                          )}
-                        </div>
-                      </TableCell>
-
-                      {/* Actions */}
-                      <TableCell>
-                        <div className="flex items-center justify-end gap-2">
-                          {/* View */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                          >
-                            <Link
-                              href={`/teacher/students/${student._id}`}
-                              className="flex items-center justify-center"
-                            >
-                              <Eye className="mr-2 size-4" />
-                              View
-                            </Link>
-                          </Button>
-
-                          {/* Manage */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              handleManageStudent(
-                                student,
-                              )
-                            }
-                          >
-                            Manage
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-
-          {/* Pagination */}
-          {pagination &&
-            pagination.totalPages > 0 && (
-              <div className="flex items-center justify-between border-t px-4 py-3">
-                <p className="text-sm text-muted-foreground">
-                  Page {pagination.page} of{" "}
-                  {pagination.totalPages}
+          <p className="text-sm text-muted-foreground">
+            Try adjusting your search or filters.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {students.map((student) => (
+            <Card
+              key={student._id}
+              className="transition-colors hover:bg-muted/20"
+            >
+              <CardContent className="flex items-center p-4">
+              {/* Student */}
+              <div className="w-[40%] shrink-0">
+                <p className="font-medium">
+                  {student.name}
                 </p>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      setPage(
-                        (current) =>
-                          current - 1,
-                      )
-                    }
-                    disabled={
-                      !pagination.hasPreviousPage
-                    }
-                  >
-                    <ChevronLeft className="size-4" />
-                  </Button>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  @{student.username}
+                </p>
+              </div>
 
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() =>
-                      setPage(
-                        (current) =>
-                          current + 1,
-                      )
-                    }
-                    disabled={
-                      !pagination.hasNextPage
-                    }
-                  >
-                    <ChevronRight className="size-4" />
-                  </Button>
+              {/* Grade */}
+              <div className="w-[15%] shrink-0">
+                <p className="text-xs text-muted-foreground">
+                  Grade
+                </p>
+
+                <p className="mt-1 text-sm font-medium">
+                  Grade {student.gradeLevel}
+                </p>
+              </div>
+
+              {/* Section */}
+              <div className="w-[15%] shrink-0">
+                <p className="text-xs text-muted-foreground">
+                  Section
+                </p>
+
+                <div className="mt-1">
+                  <Badge variant="secondary">
+                    {formatSection(student.section)}
+                  </Badge>
                 </div>
               </div>
-            )}
-        </CardContent>
-      </Card>
 
-      {/* Student Management Dialog */}
+              {/* Actions */}
+              <div className="flex w-[30%] shrink-0 justify-end gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-[84px]"                >
+                  <Link
+                    href={`/teacher/students/${student._id}`}
+                    className="flex items-center justify-center gap-2"
+                  >
+                    <Eye className="size-4" />
+                    View
+                  </Link>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-[84px]"
+                  onClick={() => handleManageStudent(student)}
+                >
+                  <Settings2 className="size-4" />
+                  Manage
+                </Button>
+              </div>
+            </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && pagination.totalPages > 0 && (
+        <div className="flex items-center justify-between border-t pt-4">
+          <p className="text-sm text-muted-foreground">
+            Page {pagination.page} of{" "}
+            {pagination.totalPages}
+          </p>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() =>
+                setPage((current) => current - 1)
+              }
+              disabled={!pagination.hasPreviousPage}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() =>
+                setPage((current) => current + 1)
+              }
+              disabled={!pagination.hasNextPage}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
       <StudentDialog
         student={selectedStudent}
         open={studentDialogOpen}

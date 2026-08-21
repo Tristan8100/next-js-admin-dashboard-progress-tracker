@@ -110,3 +110,27 @@ export interface UpdateUserPayload {
   gradeLevel?: number;
   section?: string;
 }
+
+export type ProgressType =
+  | "level"
+  | "tutorial"
+  | "knowledge_check";
+
+// export interface MapProgress {
+//   type: ProgressType;
+//   level?: number;
+//   score?: number;
+//   date_acquired: string;
+// }
+
+// export interface UserMap {
+//   _id: string;
+//   user_id: string;
+//   name: string;
+//   rank: number;
+//   progress: MapProgress[];
+//   created_at?: string;
+//   updated_at?: string;
+// }
+
+export type MyProgressResponse = UserMap[];

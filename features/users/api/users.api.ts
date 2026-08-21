@@ -6,6 +6,7 @@ import {
   RegisterStudentRequest,
   Student,
   UpdateStudentData,
+  MyProgressResponse,
 } from "../types/user.types";
 
 
@@ -49,6 +50,14 @@ export async function updateUser(
 
 export async function deleteUser(id: string) {
   const response = await api.delete(`/users/${id}`);
+
+  return response.data;
+}
+
+export async function getMyProgress(): Promise<MyProgressResponse> {
+  const response = await api.get<MyProgressResponse>(
+    "/user-maps/my-progress",
+  );
 
   return response.data;
 }
