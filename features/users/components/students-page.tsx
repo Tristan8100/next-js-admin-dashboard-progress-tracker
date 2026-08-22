@@ -34,25 +34,32 @@ import RegisterStudentDialog from "./register-student-dialog";
 import StudentDialog from "./edit-student-dialog";
 import { getApiErrorMessage } from "@/lib/api-error";
 
-/**
- * Some records store section as "A" and some as "Section A"
- * (legacy import vs. manual entry). Normalize at render time
- * so the badge is always consistent, e.g. "Section A".
- */
 function formatSection(section: string | undefined | null) {
   if (!section) return "—";
+
   const trimmed = section.trim();
+
   return trimmed.toLowerCase().startsWith("section")
     ? trimmed
     : `Section ${trimmed}`;
 }
 
+function formatGender(
+  gender: "BOY" | "GIRL" | null | undefined,
+) {
+  if (!gender) return "—";
+
+  return gender === "BOY" ? "Boy" : "Girl";
+}
+
 export default function StudentsPage() {
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] =
+    useState("");
 
   const [gradeLevel, setGradeLevel] = useState("all");
   const [section, setSection] = useState("all");
+  const [gender, setGender] = useState("all");
 
   const [page, setPage] = useState(1);
 
@@ -90,6 +97,12 @@ export default function StudentsPage() {
     ...(section !== "all"
       ? {
           section,
+        }
+      : {}),
+
+    ...(gender !== "all"
+      ? {
+          gender: gender as "BOY" | "GIRL",
         }
       : {}),
   };
@@ -142,6 +155,7 @@ export default function StudentsPage() {
       <Card>
         <CardContent className="p-4">
           <div className="flex items-center gap-3">
+            {/* Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 
@@ -155,6 +169,7 @@ export default function StudentsPage() {
               />
             </div>
 
+            {/* Grade */}
             <Select
               value={gradeLevel}
               onValueChange={(value) => {
@@ -187,6 +202,7 @@ export default function StudentsPage() {
               </SelectContent>
             </Select>
 
+            {/* Section */}
             <Select
               value={section}
               onValueChange={(value) => {
@@ -213,6 +229,35 @@ export default function StudentsPage() {
                     Section {value}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+
+            {/* Gender */}
+            <Select
+              value={gender}
+              onValueChange={(value) => {
+                if (value === null) return;
+
+                setGender(value);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="w-[150px]">
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">
+                  All genders
+                </SelectItem>
+
+                <SelectItem value="BOY">
+                  Boy
+                </SelectItem>
+
+                <SelectItem value="GIRL">
+                  Girl
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -250,67 +295,81 @@ export default function StudentsPage() {
               className="transition-colors hover:bg-muted/20"
             >
               <CardContent className="flex items-center p-4">
-              {/* Student */}
-              <div className="w-[40%] shrink-0">
-                <p className="font-medium">
-                  {student.name}
-                </p>
+                {/* Student */}
+                <div className="w-[32%] shrink-0">
+                  <p className="font-medium">
+                    {student.name}
+                  </p>
 
-                <p className="mt-1 text-sm text-muted-foreground">
-                  @{student.username}
-                </p>
-              </div>
-
-              {/* Grade */}
-              <div className="w-[15%] shrink-0">
-                <p className="text-xs text-muted-foreground">
-                  Grade
-                </p>
-
-                <p className="mt-1 text-sm font-medium">
-                  Grade {student.gradeLevel}
-                </p>
-              </div>
-
-              {/* Section */}
-              <div className="w-[15%] shrink-0">
-                <p className="text-xs text-muted-foreground">
-                  Section
-                </p>
-
-                <div className="mt-1">
-                  <Badge variant="secondary">
-                    {formatSection(student.section)}
-                  </Badge>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    @{student.username}
+                  </p>
                 </div>
-              </div>
 
-              {/* Actions */}
-              <div className="flex w-[30%] shrink-0 justify-end gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-[84px]"                >
-                  <Link
-                    href={`/teacher/students/${student._id}`}
-                    className="flex items-center justify-center gap-2"
+                {/* Grade */}
+                <div className="w-[14%] shrink-0">
+                  <p className="text-xs text-muted-foreground">
+                    Grade
+                  </p>
+
+                  <p className="mt-1 text-sm font-medium">
+                    Grade {student.gradeLevel}
+                  </p>
+                </div>
+
+                {/* Gender */}
+                <div className="w-[12%] shrink-0">
+                  <p className="text-xs text-muted-foreground">
+                    Gender
+                  </p>
+
+                  <p className="mt-1 text-sm font-medium">
+                    {formatGender(student.gender)}
+                  </p>
+                </div>
+
+                {/* Section */}
+                <div className="w-[17%] shrink-0">
+                  <p className="text-xs text-muted-foreground">
+                    Section
+                  </p>
+
+                  <div className="mt-1">
+                    <Badge variant="secondary">
+                      {formatSection(student.section)}
+                    </Badge>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex w-[25%] shrink-0 justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-[84px]"
                   >
-                    <Eye className="size-4" />
-                    View
-                  </Link>
-                </Button>
+                    <Link
+                      href={`/teacher/students/${student._id}`}
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <Eye className="size-4" />
+                      View
+                    </Link>
+                  </Button>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-[84px]"
-                  onClick={() => handleManageStudent(student)}
-                >
-                  <Settings2 className="size-4" />
-                  Manage
-                </Button>
-              </div>
-            </CardContent>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-[84px]"
+                    onClick={() =>
+                      handleManageStudent(student)
+                    }
+                  >
+                    <Settings2 className="size-4" />
+                    Manage
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
           ))}
         </div>

@@ -36,6 +36,7 @@ export default function RegisterStudentDialog() {
   const [email, setEmail] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const [section, setSection] = useState("");
+  const [gender, setGender] = useState<"BOY" | "GIRL" | "">("");
 
   const {
     mutate: registerStudent,
@@ -50,12 +51,15 @@ export default function RegisterStudentDialog() {
     setEmail("");
     setGradeLevel("");
     setSection("");
+    setGender("");
   };
 
   const handleSubmit = (
     event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
+
+    if (!gender) return;
 
     registerStudent(
       {
@@ -64,6 +68,7 @@ export default function RegisterStudentDialog() {
         password,
         section,
         gradeLevel: Number(gradeLevel),
+        gender,
         ...(email.trim()
           ? { email: email.trim() }
           : {}),
@@ -88,11 +93,9 @@ export default function RegisterStudentDialog() {
         }
       }}
     >
-      <DialogTrigger
-        className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-        >
-          <Plus className="mr-2 size-4" />
-          Add Student
+      <DialogTrigger className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
+        <Plus className="size-4" />
+        Add Student
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[500px]">
@@ -101,7 +104,7 @@ export default function RegisterStudentDialog() {
 
           <DialogDescription>
             Create a student account and assign their
-            grade level and section.
+            grade level, section, and gender.
           </DialogDescription>
         </DialogHeader>
 
@@ -193,7 +196,8 @@ export default function RegisterStudentDialog() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
+            {/* Grade */}
             <div className="space-y-2">
               <Label>Grade Level</Label>
 
@@ -205,7 +209,7 @@ export default function RegisterStudentDialog() {
                 disabled={isPending}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select grade" />
+                  <SelectValue placeholder="Grade" />
                 </SelectTrigger>
 
                 <SelectContent>
@@ -224,6 +228,7 @@ export default function RegisterStudentDialog() {
               </Select>
             </div>
 
+            {/* Section */}
             <div className="space-y-2">
               <Label>Section</Label>
 
@@ -235,7 +240,7 @@ export default function RegisterStudentDialog() {
                 disabled={isPending}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select section" />
+                  <SelectValue placeholder="Section" />
                 </SelectTrigger>
 
                 <SelectContent>
@@ -249,6 +254,35 @@ export default function RegisterStudentDialog() {
                       </SelectItem>
                     ),
                   )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Gender */}
+            <div className="space-y-2">
+              <Label>Gender</Label>
+
+              <Select
+                value={gender}
+                onValueChange={(value) => {
+                  if (value === "BOY" || value === "GIRL") {
+                    setGender(value);
+                  }
+                }}
+                disabled={isPending}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Gender" />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="BOY">
+                    Boy
+                  </SelectItem>
+
+                  <SelectItem value="GIRL">
+                    Girl
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -280,7 +314,8 @@ export default function RegisterStudentDialog() {
                 !username.trim() ||
                 !password ||
                 !gradeLevel ||
-                !section
+                !section ||
+                !gender
               }
             >
               {isPending && (

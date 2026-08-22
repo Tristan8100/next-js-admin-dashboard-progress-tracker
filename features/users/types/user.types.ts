@@ -7,6 +7,7 @@ export interface Student {
   coins: number;
   gradeLevel: number;
   section: string;
+  gender: "BOY" | "GIRL" | null;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
@@ -42,6 +43,7 @@ export interface StudentQuery {
     | "created_at"
     | "updated_at";
   sortOrder?: "asc" | "desc";
+  gender?: "BOY" | "GIRL" | null;
 }
 
 export interface RegisterStudentRequest {
@@ -51,6 +53,7 @@ export interface RegisterStudentRequest {
   section: string;
   gradeLevel: number;
   email?: string;
+  gender: "BOY" | "GIRL";
 }
 
 export interface UpdateStudentData {
@@ -97,6 +100,7 @@ export interface User {
   coins: number;
   gradeLevel: number;
   section: string;
+  gender: "BOY" | "GIRL" | null;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
