@@ -11,6 +11,7 @@ import {
 
 import { useMyProgress } from "../hooks/use-my-progress";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { displayLevel } from "@/lib/progress";
 
 function formatProgressType(type: string) {
   return type
@@ -281,7 +282,7 @@ export default function MyProgressPage() {
                                   undefined && (
                                   <p className="mt-1 pl-6 text-sm text-muted-foreground">
                                     Level{" "}
-                                    {progress.level}
+                                    {displayLevel(progress.level)}
                                   </p>
                                 )}
                               </div>

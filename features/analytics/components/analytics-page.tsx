@@ -34,6 +34,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { getApiErrorMessage } from "@/lib/api-error";
+import { displayLevel } from "@/lib/progress";
 
 export default function AnalyticsPage() {
   const [gradeLevel, setGradeLevel] =
@@ -454,7 +455,7 @@ export default function AnalyticsPage() {
                         )}
 
                         {item.level !== undefined &&
-                          ` • Level ${item.level}`}
+                          ` • Level ${displayLevel(item.level)}`}
                       </p>
                     </div>
 

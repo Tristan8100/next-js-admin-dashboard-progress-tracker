@@ -20,6 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { displayLevel } from "@/lib/progress";
 
 type Props = {
   studentId: string;
@@ -270,11 +271,11 @@ export default function StudentProgressPage({
                                     <p className="text-sm font-medium">
                                       {progress.type ===
                                       "level"
-                                        ? `Level ${progress.level}`
+                                        ? `Level ${progress.level !== undefined ? displayLevel(progress.level) : ''}`
                                         : progress.type ===
                                             "tutorial"
-                                          ? `Tutorial ${progress.level}`
-                                          : `Knowledge Check ${progress.level}`}
+                                          ? `Tutorial ${progress.level !== undefined ? displayLevel(progress.level) : ''}`
+                                          : `Knowledge Check ${progress.level !== undefined ? displayLevel(progress.level) : ''}`}
                                     </p>
 
                                     <p className="text-xs text-muted-foreground">
