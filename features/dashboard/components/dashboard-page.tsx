@@ -279,9 +279,9 @@ export default function DashboardPage() {
             ?.length ? (
             <div className="space-y-4">
               {dashboard.studentsNeedingAttention.map(
-                (student) => (
+                (student, index) => (
                   <Link
-                    key={student._id}
+                    key={index}
                     href={`/teacher/students/${student._id}`}
                     className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
                   >

@@ -7,6 +7,8 @@ import {
   Student,
   UpdateStudentData,
   MyProgressResponse,
+  LeaderboardResponse,
+  LeaderboardQuery,
 } from "../types/user.types";
 
 
@@ -61,3 +63,16 @@ export async function getMyProgress(): Promise<MyProgressResponse> {
 
   return response.data;
 }
+
+export const getLeaderboard = async (
+  query?: LeaderboardQuery,
+): Promise<LeaderboardResponse> => {
+  const response = await api.get<LeaderboardResponse>(
+    "/dashboard/leaderboard",
+    {
+      params: query,
+    },
+  );
+
+  return response.data;
+};

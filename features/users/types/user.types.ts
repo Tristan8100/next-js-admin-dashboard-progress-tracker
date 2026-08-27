@@ -138,3 +138,34 @@ export type ProgressType =
 // }
 
 export type MyProgressResponse = UserMap[];
+
+export interface LeaderboardLastActivity {
+  map_name: string;
+  rank: number;
+  type: ProgressType;
+  level?: number;
+  date_acquired: string;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  user_id: string;
+  student_name: string;
+  username: string;
+  gradeLevel: number;
+  section: string;
+  totalScore: number;
+  levelsCompleted: number;
+  scoreRate: number;
+  lastActivity: LeaderboardLastActivity;
+}
+
+export interface LeaderboardResponse {
+  top: LeaderboardEntry[];
+  bottom: LeaderboardEntry[];
+}
+
+export interface LeaderboardQuery {
+  startDate?: string;
+  endDate?: string;
+}
