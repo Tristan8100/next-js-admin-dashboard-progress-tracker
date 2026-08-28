@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, LogOut, Save } from "lucide-react";
 
 import {
   useMyProfile,
@@ -9,6 +9,7 @@ import {
 } from "../hooks/use-my-profile";
 
 import { getApiErrorMessage } from "@/lib/api-error";
+import { useLogout } from "@/features/auth/hooks/use-logout";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import {
 } from "@/components/ui/card";
 
 export default function ProfilePage() {
+  const { logout } = useLogout();
   const {
     data: profile,
     isLoading,
@@ -248,6 +250,23 @@ export default function ProfilePage() {
               </Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Session</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={logout}
+          >
+            <LogOut className="size-4" />
+            Log out
+          </Button>
         </CardContent>
       </Card>
     </div>

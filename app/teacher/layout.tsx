@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Settings,
   Users,
   BarChart3,
   GraduationCap,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { AccountMenu } from "@/features/auth/components/account-menu"
 
 const NAV_ITEMS = [
   {
@@ -116,28 +116,9 @@ function TopNav() {
           )}
         </nav>
 
-        {/* Right: Settings + Profile */}
+        {/* Right: Account menu */}
         <div className="flex items-center justify-end gap-2">
-          <Link
-            href="/teacher/settings"
-            aria-label="Settings"
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-full",
-              "text-muted-foreground transition-all duration-200",
-              "hover:bg-muted hover:text-foreground",
-              isActivePath(pathname, "/teacher/settings") &&
-                "bg-muted text-foreground"
-            )}
-          >
-            <Settings className="h-4.5 w-4.5" />
-          </Link>
-
-          {/* Profile */}
-          <button
-            type="button"
-            aria-label="Profile"
-            className="h-9 w-9 rounded-full bg-muted transition-colors hover:bg-muted/80"
-          />
+          <AccountMenu settingsHref="/teacher/settings" />
         </div>
       </div>
     </header>
@@ -297,6 +278,11 @@ function BottomNav() {
             Analytics
           </span>
         </Link>
+
+        <AccountMenu
+          settingsHref="/teacher/settings"
+          mobile
+        />
       </div>
     </nav>
   )

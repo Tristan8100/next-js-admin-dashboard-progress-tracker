@@ -3,13 +3,13 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Settings,
   GraduationCap,
   LayoutDashboard,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/features/auth/hooks/use-auth"
+import { AccountMenu } from "@/features/auth/components/account-menu"
 
 const NAV_ITEMS = [
   {
@@ -17,12 +17,6 @@ const NAV_ITEMS = [
     href: "/student/dashboard",
     icon: LayoutDashboard,
     dashboard: true,
-  },
-  {
-    label: "Settings",
-    href: "/student/settings",
-    icon: Settings,
-    dashboard: false,
   },
 ] as const
 
@@ -107,6 +101,10 @@ function TopNavStudent() {
             },
           )}
         </nav>
+
+        <div className="flex items-center justify-end">
+          <AccountMenu settingsHref="/student/settings" />
+        </div>
       </div>
     </header>
   )
@@ -207,6 +205,11 @@ function BottomNav() {
             )
           },
         )}
+
+        <AccountMenu
+          settingsHref="/student/settings"
+          mobile
+        />
       </div>
     </nav>
   )
