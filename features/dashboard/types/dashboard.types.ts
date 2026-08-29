@@ -27,14 +27,14 @@ export interface RecentStudent {
 }
 
 export interface StudentNeedingAttention {
-  _id: string;
+  user_id: string;
   name: string;
   username?: string;
   gradeLevel?: number;
   section?: string;
-  reason?: string;
+  completed: number;
+  lastActivity: string;
 }
-
 export interface DashboardResponse {
   summary: DashboardSummary;
   recentActivity: RecentActivity[];
