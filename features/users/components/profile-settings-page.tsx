@@ -21,7 +21,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function ProfilePage() {
+interface ProfilePageProps {
+  role?: "user" | "admin";
+}
+
+export default function ProfilePage({
+  role = "user",
+}: ProfilePageProps) {
   const { logout } = useLogout();
   const {
     data: profile,
@@ -59,20 +65,24 @@ export default function ProfilePage() {
   ) => {
     event.preventDefault();
 
-    const payload = {
+    const payload: any = {
       name: name.trim(),
       username: username.trim(),
       email: email.trim() || undefined,
-      gradeLevel: gradeLevel
-        ? Number(gradeLevel)
-        : undefined,
-      section: section.trim(),
       ...(password
         ? {
             password,
           }
         : {}),
     };
+
+    // Only include gradeLevel and section for user role
+    if (role === "user") {
+      payload.gradeLevel = gradeLevel
+        ? Number(gradeLevel)
+        : undefined;
+      payload.section = section.trim();
+    }
 
     updateMutation.mutate(payload, {
       onSuccess: () => {
@@ -127,6 +137,7 @@ export default function ProfilePage() {
               </label>
 
               <Input
+                disabled={role === "user"}
                 value={name}
                 onChange={(event) =>
                   setName(event.target.value)
@@ -141,6 +152,7 @@ export default function ProfilePage() {
               </label>
 
               <Input
+                disabled={role === "user"}
                 value={username}
                 onChange={(event) =>
                   setUsername(event.target.value)
@@ -156,6 +168,7 @@ export default function ProfilePage() {
 
               <Input
                 type="email"
+                disabled={role === "user"}
                 value={email}
                 onChange={(event) =>
                   setEmail(event.target.value)
@@ -164,36 +177,40 @@ export default function ProfilePage() {
               />
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Grade Level
-                </label>
+            {role === "user" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Grade Level
+                  </label>
 
-                <Input
-                  type="number"
-                  min={1}
-                  value={gradeLevel}
-                  onChange={(event) =>
-                    setGradeLevel(event.target.value)
-                  }
-                />
+                  <Input
+                    type="number"
+                    min={1}
+                    disabled
+                    value={gradeLevel}
+                    onChange={(event) =>
+                      setGradeLevel(event.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Section
+                  </label>
+
+                  <Input
+                    disabled
+                    value={section}
+                    onChange={(event) =>
+                      setSection(event.target.value)
+                    }
+                    placeholder="Section"
+                  />
+                </div>
               </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
-                  Section
-                </label>
-
-                <Input
-                  value={section}
-                  onChange={(event) =>
-                    setSection(event.target.value)
-                  }
-                  placeholder="Section"
-                />
-              </div>
-            </div>
+            )}
 
             <div className="border-t pt-5">
               <div className="mb-3">
