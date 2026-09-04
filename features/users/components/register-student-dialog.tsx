@@ -93,9 +93,9 @@ export default function RegisterStudentDialog() {
         }
       }}
     >
-      <DialogTrigger className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
+      <DialogTrigger className="inline-flex h-9 border bg-primary-foreground/10 px-4 py-2.5 font-bold items-center justify-center gap-2 rounded-md px-4 py-2 text-sm text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
         <Plus className="size-4" />
-        Add Student
+        <div className="font-bold">Add Student</div>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[500px]">
