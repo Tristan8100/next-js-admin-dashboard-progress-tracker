@@ -68,7 +68,7 @@ export default function ProfilePage({
     const payload: any = {
       name: name.trim(),
       username: username.trim(),
-      email: email.trim() || undefined,
+      //email: email.trim() || undefined,
       ...(password
         ? {
             password,
@@ -168,11 +168,11 @@ export default function ProfilePage({
 
               <Input
                 type="email"
-                disabled={role === "user"}
+                disabled
                 value={email}
-                onChange={(event) =>
-                  setEmail(event.target.value)
-                }
+                // onChange={(event) =>
+                //   setEmail(event.target.value)
+                // }
                 placeholder="Email"
               />
             </div>
