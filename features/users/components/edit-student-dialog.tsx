@@ -206,7 +206,7 @@ export default function StudentDialog({
                     onValueChange={(value) =>
                       setGradeLevel(value ?? "")
                     }
-                    disabled={updateMutation.isPending}
+                    disabled={true}
                   >
                     <SelectTrigger>
                       <SelectValue />

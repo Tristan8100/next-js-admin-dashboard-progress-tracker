@@ -93,7 +93,7 @@ export default function StudentsPage() {
       <section className="relative overflow-hidden rounded-[2rem] border-2 border-border bg-primary px-6 py-8 text-primary-foreground shadow-playful-lg sm:px-9 sm:py-10">
         <div className="absolute -right-8 -top-10 size-40 rounded-full bg-secondary/90" aria-hidden="true" />
         <div className="absolute -bottom-16 right-24 size-32 rounded-full border-[18px] border-card/15" aria-hidden="true" />
-        <div className="relative flex flex-wrap items-end justify-between gap-6">
+        <div className="relative sm:flex sm:flex-wrap sm:items-end sm:justify-between sm:gap-6">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">
               <Sparkles className="size-3.5" /> Your classroom
@@ -116,8 +116,8 @@ export default function StudentsPage() {
       {/* Filters */}
       <Card className="border-2 border-border bg-card shadow-playful">
         <CardContent className="p-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative min-w-[220px] flex-1">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <div className="relative w-full sm:min-w-[220px] sm:flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search by name or username..."
@@ -135,7 +135,7 @@ export default function StudentsPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-[150px] rounded-xl border-border">
+              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -156,7 +156,7 @@ export default function StudentsPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-[150px] rounded-xl border-border">
+              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -177,7 +177,7 @@ export default function StudentsPage() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-[150px] rounded-xl border-border">
+              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -217,7 +217,7 @@ export default function StudentsPage() {
         <div className="space-y-3">
           {students.map((student) => (
             <Card key={student._id} className="border-2 border-border bg-card shadow-playful transition-colors hover:bg-aqua/20">
-              <CardContent className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] items-center gap-4 p-4">
+              <CardContent className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] xl:items-center">
                 {/* Student */}
                 <div className="flex min-w-0 items-center gap-3">
                   <div className="grid size-10 shrink-0 place-items-center rounded-full bg-primary text-sm font-extrabold text-primary-foreground">
@@ -230,21 +230,21 @@ export default function StudentsPage() {
                 </div>
 
                 {/* Grade */}
-                <div className="min-w-0">
-                  <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-ocean">Grade</p>
-                  <p className="mt-1 truncate text-sm font-bold text-navy">Grade {student.gradeLevel}</p>
+                <div className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-muted/30 px-2.5 py-2 sm:block sm:bg-transparent sm:p-0">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ocean sm:text-xs">Grade</p>
+                  <p className="truncate text-sm font-bold text-navy sm:mt-1">Grade {student.gradeLevel}</p>
                 </div>
 
                 {/* Gender */}
-                <div className="min-w-0">
-                  <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-ocean">Gender</p>
-                  <p className="mt-1 truncate text-sm font-bold text-navy">{formatGender(student.gender)}</p>
+                <div className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-muted/30 px-2.5 py-2 sm:block sm:bg-transparent sm:p-0">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ocean sm:text-xs">Gender</p>
+                  <p className="truncate text-sm font-bold text-navy sm:mt-1">{formatGender(student.gender)}</p>
                 </div>
 
                 {/* Section */}
-                <div className="min-w-0">
-                  <p className="font-mono text-xs font-bold uppercase tracking-[0.14em] text-ocean">Section</p>
-                  <div className="mt-1">
+                <div className="flex min-w-0 items-center justify-between gap-3 rounded-xl bg-muted/30 px-2.5 py-2 sm:block sm:bg-transparent sm:p-0">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-ocean sm:text-xs">Section</p>
+                  <div className="sm:mt-1">
                     <Badge className="rounded-lg bg-secondary/20 text-secondary-foreground hover:bg-secondary/20">
                       {formatSection(student.section)}
                     </Badge>
@@ -252,9 +252,9 @@ export default function StudentsPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="flex shrink-0 justify-end gap-2">
-                  <Button  variant="outline" size="sm" className="w-[84px] rounded-xl border-border">
-                    <Link href={`/teacher/students/${student._id}`} className="flex items-center justify-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:justify-end sm:gap-2">
+                  <Button variant="outline" size="sm" className="w-full rounded-xl border-border sm:w-[84px]">
+                    <Link href={`/teacher/students/${student._id}`} className="flex w-full items-center justify-center gap-2">
                       <Eye className="size-4" />
                       View
                     </Link>
@@ -263,7 +263,7 @@ export default function StudentsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-[92px] rounded-xl border-border"
+                    className="w-full rounded-xl border-border sm:w-[92px]"
                     onClick={() => handleManageStudent(student)}
                   >
                     <Settings2 className="size-4" />
