@@ -152,7 +152,7 @@ export default function AnalyticsPage() {
       <Card className="border-2 border-border bg-card shadow-playful">
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Select value={gradeLevel} onValueChange={(value) => setGradeLevel(value ?? "all")}>
+            <Select value={gradeLevel} onValueChange={(value) => setGradeLevel(value ?? "all")} disabled={true}> 
               <SelectTrigger className="w-full rounded-xl border-border sm:w-[170px]">
                 <SelectValue placeholder="Grade level" />
               </SelectTrigger>
