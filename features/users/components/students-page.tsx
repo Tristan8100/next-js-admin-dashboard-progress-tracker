@@ -134,6 +134,7 @@ export default function StudentsPage() {
                 setGradeLevel(value);
                 setPage(1);
               }}
+              disabled={true}
             >
               <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
                 <SelectValue />
