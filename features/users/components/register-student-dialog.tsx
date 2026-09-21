@@ -34,7 +34,6 @@ export default function RegisterStudentDialog() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [gradeLevel, setGradeLevel] = useState("");
   const [section, setSection] = useState("");
   const [gender, setGender] = useState<"BOY" | "GIRL" | "">("");
 
@@ -49,7 +48,6 @@ export default function RegisterStudentDialog() {
     setUsername("");
     setPassword("");
     setEmail("");
-    setGradeLevel("");
     setSection("");
     setGender("");
   };
@@ -67,7 +65,7 @@ export default function RegisterStudentDialog() {
         username: username.trim(),
         password,
         section,
-        gradeLevel: Number(gradeLevel),
+        gradeLevel: 3,
         gender,
         ...(email.trim()
           ? { email: email.trim() }
@@ -93,7 +91,7 @@ export default function RegisterStudentDialog() {
         }
       }}
     >
-      <DialogTrigger className="inline-flex h-9 border bg-primary-foreground/10 px-4 py-2.5 font-bold items-center justify-center gap-2 rounded-md px-4 py-2 text-sm text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
+      <DialogTrigger className="inline-flex h-9 items-center justify-center gap-2 rounded-md border bg-primary-foreground/10 px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
         <Plus className="size-4" />
         <div className="font-bold">Add Student</div>
       </DialogTrigger>
@@ -103,8 +101,8 @@ export default function RegisterStudentDialog() {
           <DialogTitle>Add Student</DialogTitle>
 
           <DialogDescription>
-            Create a student account and assign their
-            grade level, section, and gender.
+            Create a Grade 3 student account and assign
+            their section and gender.
           </DialogDescription>
         </DialogHeader>
 
@@ -197,35 +195,18 @@ export default function RegisterStudentDialog() {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            {/* Grade */}
+            {/* Grade Level */}
             <div className="space-y-2">
-              <Label>Grade Level</Label>
+              <Label htmlFor="student-grade">
+                Grade Level
+              </Label>
 
-              <Select
-                value={gradeLevel}
-                onValueChange={(value) =>
-                  setGradeLevel(value ?? "")
-                }
-                disabled={isPending}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Grade" />
-                </SelectTrigger>
-
-                <SelectContent>
-                  {Array.from(
-                    { length: 12 },
-                    (_, index) => index + 1,
-                  ).map((grade) => (
-                    <SelectItem
-                      key={grade}
-                      value={String(grade)}
-                    >
-                      Grade {grade}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                id="student-grade"
+                value="Grade 3"
+                disabled
+                readOnly
+              />
             </div>
 
             {/* Section */}
@@ -265,7 +246,10 @@ export default function RegisterStudentDialog() {
               <Select
                 value={gender}
                 onValueChange={(value) => {
-                  if (value === "BOY" || value === "GIRL") {
+                  if (
+                    value === "BOY" ||
+                    value === "GIRL"
+                  ) {
                     setGender(value);
                   }
                 }}
@@ -313,7 +297,6 @@ export default function RegisterStudentDialog() {
                 !name.trim() ||
                 !username.trim() ||
                 !password ||
-                !gradeLevel ||
                 !section ||
                 !gender
               }

@@ -41,8 +41,8 @@ export default function LoginForm() {
     login(
       {
         ...(isEmail
-          ? { email: identifier }
-          : { username: identifier }),
+          ? { email: identifier.trim() }
+          : { username: identifier.trim() }),
         password,
       },
       {
