@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { useStudentProgress } from "../hooks/use-student-progress";
+import type { UserMap } from "../types/user.types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -66,30 +67,69 @@ export default function StudentProgressPage({
     );
   }
 
-  const studentMaps = maps ?? [];
+  const normalizeStudentMaps = (value: unknown): UserMap[] => {
+    if (Array.isArray(value)) {
+      return value as UserMap[];
+    }
 
-  const totalProgress = studentMaps.reduce(
-    (total, map) =>
-      total + map.progress.length,
+    if (value && typeof value === "object") {
+      const maybe = value as {
+        data?: unknown;
+        maps?: unknown;
+        studentMaps?: unknown;
+        userMaps?: unknown;
+      };
+
+      if (Array.isArray(maybe.data)) return maybe.data as UserMap[];
+      if (Array.isArray(maybe.maps)) return maybe.maps as UserMap[];
+      if (Array.isArray(maybe.studentMaps)) return maybe.studentMaps as UserMap[];
+      if (Array.isArray(maybe.userMaps)) return maybe.userMaps as UserMap[];
+    }
+
+    return [];
+  };
+
+  const studentMaps = normalizeStudentMaps(maps);
+
+  const totalProgress = studentMaps.reduce<number>(
+    (total: number, map) =>
+      total +
+      (Array.isArray(map.progress)
+        ? map.progress.length
+        : 0),
     0,
   );
 
-  const completedLevels = studentMaps.reduce(
-    (total, map) =>
+  const completedLevels = studentMaps.reduce<number>(
+    (total: number, map) =>
       total +
-      map.progress.filter(
-        (item) => item.type === "level",
-      ).length,
+      (Array.isArray(map.progress)
+        ? map.progress.filter(
+            (item: {
+              type: "level" | "tutorial" | "knowledge_check";
+              level?: number;
+              score?: number;
+              date_acquired: string;
+            }) => item?.type === "level",
+          ).length
+        : 0),
     0,
   );
 
-  const knowledgeChecks = studentMaps.reduce(
-    (total, map) =>
+  const knowledgeChecks = studentMaps.reduce<number>(
+    (total: number, map) =>
       total +
-      map.progress.filter(
-        (item) =>
-          item.type === "knowledge_check",
-      ).length,
+      (Array.isArray(map.progress)
+        ? map.progress.filter(
+            (item: {
+              type: "level" | "tutorial" | "knowledge_check";
+              level?: number;
+              score?: number;
+              date_acquired: string;
+            }) =>
+              item?.type === "knowledge_check",
+          ).length
+        : 0),
     0,
   );
 
@@ -255,11 +295,7 @@ export default function StudentProgressPage({
                               (a.level ?? 0) -
                               (b.level ?? 0),
                           )
-                          .map(
-                            (
-                              progress,
-                              index,
-                            ) => (
+                          .map((progress, index) => (
                               <div
                                 key={`${progress.type}-${progress.level}-${index}`}
                                 className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2"

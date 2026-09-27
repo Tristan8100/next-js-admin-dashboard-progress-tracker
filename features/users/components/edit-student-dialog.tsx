@@ -35,6 +35,8 @@ interface Student {
   gradeLevel: number;
   section: string;
   coins: number;
+  batch?: number;
+  active?: boolean;
   email_verified_at?: string | null;
 }
 
@@ -59,6 +61,8 @@ export default function StudentDialog({
   const [gradeLevel, setGradeLevel] = useState("");
   const [section, setSection] = useState("");
   const [password, setPassword] = useState("");
+  const [batch, setBatch] = useState<number | undefined>(undefined);
+  const [active, setActive] = useState(true);
 
   const updateMutation = useUpdateUser();
   const deleteMutation = useDeleteUser();
@@ -72,6 +76,8 @@ export default function StudentDialog({
     setGradeLevel(String(student.gradeLevel));
     setSection(student.section);
     setPassword("");
+    setBatch(student.batch ?? undefined);
+    setActive(student.active ?? true);
 
     setIsEditing(false);
     setShowDeleteConfirm(false);
@@ -89,6 +95,8 @@ export default function StudentDialog({
       username: username.trim(),
       gradeLevel: Number(gradeLevel),
       section,
+      ...(batch !== undefined ? { batch } : {}),
+      active,
     };
 
     if (email.trim()) {
@@ -195,6 +203,60 @@ export default function StudentDialog({
                   }
                   disabled={updateMutation.isPending}
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="student-batch">
+                    Batch
+                    <span className="ml-1 text-muted-foreground">
+                      (Optional)
+                    </span>
+                  </Label>
+
+                  <Input
+                    id="student-batch"
+                    type="number"
+                    min={1}
+                    value={batch ?? ""}
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setBatch(
+                        value === ""
+                          ? undefined
+                          : Number(value),
+                      );
+                    }}
+                    disabled={updateMutation.isPending}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Account Status</Label>
+
+                  <Select
+                    value={String(active)}
+                    onValueChange={(value) =>
+                      setActive(value === "true")
+                    }
+                    disabled={updateMutation.isPending}
+                  >
+                    <SelectTrigger>
+                      <SelectValue>
+                        {active ? "Active" : "Inactive"}
+                      </SelectValue>
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="true">
+                        Active
+                      </SelectItem>
+                      <SelectItem value="false">
+                        Inactive
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">

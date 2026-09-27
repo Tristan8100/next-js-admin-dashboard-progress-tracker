@@ -20,6 +20,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { UpdateUserPayload } from "../types/user.types";
 
 interface ProfilePageProps {
   role?: "user" | "admin";
@@ -43,6 +51,8 @@ export default function ProfilePage({
   const [email, setEmail] = useState("");
   const [gradeLevel, setGradeLevel] = useState("");
   const [section, setSection] = useState("");
+  const [batch, setBatch] = useState<number | undefined>(undefined);
+  const [active, setActive] = useState(true);
   const [password, setPassword] = useState("");
 
   /*
@@ -58,6 +68,8 @@ export default function ProfilePage({
       profile.gradeLevel?.toString() ?? "",
     );
     setSection(profile.section ?? "");
+    setBatch(profile.batch ?? undefined);
+    setActive(profile.active ?? true);
   }, [profile]);
 
   const handleSubmit = (
@@ -65,15 +77,16 @@ export default function ProfilePage({
   ) => {
     event.preventDefault();
 
-    const payload: any = {
+    const payload: UpdateUserPayload = {
       name: name.trim(),
       username: username.trim(),
-      //email: email.trim() || undefined,
       ...(password
         ? {
             password,
           }
         : {}),
+      ...(batch !== undefined ? { batch } : {}),
+      active,
     };
 
     // Only include gradeLevel and section for user role
@@ -211,6 +224,58 @@ export default function ProfilePage({
                 </div>
               </div>
             )}
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Batch
+                </label>
+
+                <Input
+                  type="number"
+                  min={1}
+                  value={batch ?? ""}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setBatch(
+                      value === ""
+                        ? undefined
+                        : Number(value),
+                    );
+                  }}
+                  placeholder="2026"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">
+                  Account Status
+                </label>
+
+                <Select
+                  value={String(active)}
+                  onValueChange={(value) =>
+                    setActive(value === "true")
+                  }
+                  disabled
+                >
+                  <SelectTrigger className="opacity-80">
+                    <SelectValue>
+                      {active ? "Active" : "Inactive"}
+                    </SelectValue>
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectItem value="true">
+                      Active
+                    </SelectItem>
+                    <SelectItem value="false">
+                      Inactive
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
             <div className="border-t pt-5">
               <div className="mb-3">

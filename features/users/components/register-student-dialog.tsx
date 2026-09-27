@@ -36,6 +36,8 @@ export default function RegisterStudentDialog() {
   const [email, setEmail] = useState("");
   const [section, setSection] = useState("");
   const [gender, setGender] = useState<"BOY" | "GIRL" | "">("");
+  const [batch, setBatch] = useState<number | undefined>(undefined);
+  const [active, setActive] = useState(true);
 
   const {
     mutate: registerStudent,
@@ -50,6 +52,8 @@ export default function RegisterStudentDialog() {
     setEmail("");
     setSection("");
     setGender("");
+    setBatch(undefined);
+    setActive(true);
   };
 
   const handleSubmit = (
@@ -70,6 +74,8 @@ export default function RegisterStudentDialog() {
         ...(email.trim()
           ? { email: email.trim() }
           : {}),
+        ...(batch !== undefined ? { batch } : {}),
+        active,
       },
       {
         onSuccess: () => {
@@ -91,7 +97,7 @@ export default function RegisterStudentDialog() {
         }
       }}
     >
-      <DialogTrigger className="inline-flex h-9 items-center justify-center gap-2 rounded-md border bg-primary-foreground/10 px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
+      <DialogTrigger className="inline-flex h-9 items-center justify-center gap-2 rounded-md border bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50">
         <Plus className="size-4" />
         <div className="font-bold">Add Student</div>
       </DialogTrigger>
@@ -194,7 +200,60 @@ export default function RegisterStudentDialog() {
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="student-batch">
+                Batch
+                <span className="ml-1 text-muted-foreground">
+                  (Optional)
+                </span>
+              </Label>
+
+              <Input
+                id="student-batch"
+                type="number"
+                min={1}
+                placeholder="2026"
+                value={batch ?? ""}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setBatch(
+                    value === ""
+                      ? undefined
+                      : Number(value),
+                  );
+                }}
+                disabled={isPending}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Status</Label>
+
+              <Select
+                value={String(active)}
+                onValueChange={(value) =>
+                  setActive(value === "true")
+                }
+                disabled={isPending}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="true">
+                    Active
+                  </SelectItem>
+                  <SelectItem value="false">
+                    Inactive
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             {/* Grade Level */}
             <div className="space-y-2">
               <Label htmlFor="student-grade">

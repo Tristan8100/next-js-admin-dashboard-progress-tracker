@@ -8,7 +8,6 @@ import {
   Clock3,
   Layers3,
   Loader2,
-  Sparkles,
   Trophy,
 } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
@@ -25,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
+import DashboardBanner from "@/features/dashboard/components/dashboard-banner";
 type ProgressEntry = {
   type: string;
   level?: number;
@@ -84,13 +83,13 @@ export default function MyProgressPage() {
   if (!maps || maps.length === 0) {
     return (
       <div className="space-y-7 pb-6">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-full border border-border bg-aqua/50 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em] text-ocean">
-            <Sparkles className="size-3.5" /> Your journey
-          </p>
-          <h1 className="font-display mt-4 text-4xl tracking-tight text-navy">My progress</h1>
-          <p className="mt-2 text-base leading-7 text-muted-foreground">Track your learning progress across all maps.</p>
-        </div>
+        <DashboardBanner
+          badge="Your journey"
+          title="My progress"
+          description="Track your learning progress across all maps."
+          actionHref="#"
+          actionLabel="View Maps"
+        />
 
         <Card className="border-2 border-border bg-card shadow-playful">
           <CardContent className="flex flex-col items-center gap-3 p-12 text-center">
@@ -109,19 +108,13 @@ export default function MyProgressPage() {
 
   return (
     <div className="space-y-7 pb-6">
-      <section className="relative overflow-hidden rounded-[2rem] border-2 border-border bg-primary px-6 py-8 text-primary-foreground shadow-playful-lg sm:px-9 sm:py-10">
-        <div className="absolute -right-8 -top-10 size-40 rounded-full bg-secondary/90" aria-hidden="true" />
-        <div className="absolute -bottom-16 right-24 size-32 rounded-full border-[18px] border-card/15" aria-hidden="true" />
-        <div className="relative">
-          <p className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">
-            <Sparkles className="size-3.5" /> Your journey
-          </p>
-          <h1 className="font-display mt-5 max-w-2xl text-balance text-4xl tracking-tight sm:text-5xl">My progress</h1>
-          <p className="mt-3 max-w-xl text-base leading-7 text-primary-foreground/85 sm:text-lg">
-            Track your learning progress across all maps.
-          </p>
-        </div>
-      </section>
+      <DashboardBanner
+        badge="Your journey"
+        title="My progress"
+        description="Track your learning progress across all maps."
+        actionHref="#"
+        actionLabel="View Maps"
+      />
 
       <section aria-labelledby="overview-heading">
         <div className="mb-4">

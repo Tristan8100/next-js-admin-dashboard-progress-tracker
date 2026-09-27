@@ -11,6 +11,8 @@ export interface UserInfo {
   username: string;
   role: string;
   section: string;
+  batch?: number;
+  active?: boolean;
 }
 
 export interface LoginResponse {
@@ -25,6 +27,8 @@ export interface RegisterRequest {
   name: string;
   username: string;
   password: string;
+  batch?: number;
+  active?: boolean;
 }
 
 export interface RegisterResponse {

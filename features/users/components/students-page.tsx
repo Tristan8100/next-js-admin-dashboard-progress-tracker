@@ -9,7 +9,6 @@ import {
   Loader2,
   Search,
   Settings2,
-  Sparkles,
   Users,
 } from "lucide-react";
 
@@ -31,7 +30,7 @@ import { Badge } from "@/components/ui/badge";
 import RegisterStudentDialog from "./register-student-dialog";
 import StudentDialog from "./edit-student-dialog";
 import { getApiErrorMessage } from "@/lib/api-error";
-
+import DashboardBanner from "@/features/dashboard/components/dashboard-banner";
 function formatSection(section: string | undefined | null) {
   if (!section) return "—";
   const trimmed = section.trim();
@@ -41,6 +40,11 @@ function formatSection(section: string | undefined | null) {
 function formatGender(gender: "BOY" | "GIRL" | null | undefined) {
   if (!gender) return "—";
   return gender === "BOY" ? "Boy" : "Girl";
+}
+
+function getStatusLabel(value: string) {
+  if (value === "all") return "All status";
+  return value === "true" ? "Active" : "Inactive";
 }
 
 function getInitials(name: string) {
@@ -54,6 +58,8 @@ export default function StudentsPage() {
   const [gradeLevel, setGradeLevel] = useState("all");
   const [section, setSection] = useState("all");
   const [gender, setGender] = useState("all");
+  const [batch, setBatch] = useState("all");
+  const [active, setActive] = useState("all");
 
   const [page, setPage] = useState(1);
 
@@ -76,6 +82,8 @@ export default function StudentsPage() {
     ...(gradeLevel !== "all" ? { gradeLevel: Number(gradeLevel) } : {}),
     ...(section !== "all" ? { section } : {}),
     ...(gender !== "all" ? { gender: gender as "BOY" | "GIRL" } : {}),
+    ...(batch !== "all" ? { batch: Number(batch) } : {}),
+    ...(active !== "all" ? { active: active === "true" } : {}),
   };
 
   const { data, isLoading, isError, error } = useStudents(query);
@@ -90,33 +98,27 @@ export default function StudentsPage() {
 
   return (
     <div className="space-y-7 pb-6">
-      <section className="relative overflow-hidden rounded-[2rem] border-2 border-border bg-primary px-6 py-8 text-primary-foreground shadow-playful-lg sm:px-9 sm:py-10">
-        <div className="absolute -right-8 -top-10 size-40 rounded-full bg-secondary/90" aria-hidden="true" />
-        <div className="absolute -bottom-16 right-24 size-32 rounded-full border-[18px] border-card/15" aria-hidden="true" />
-        <div className="relative sm:flex sm:flex-wrap sm:items-end sm:justify-between sm:gap-6">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">
-              <Sparkles className="size-3.5" /> Your classroom
-            </p>
-            <h1 className="font-display mt-5 max-w-2xl text-balance text-4xl tracking-tight sm:text-5xl">Students</h1>
-            <p className="mt-3 max-w-xl text-base leading-7 text-primary-foreground/85 sm:text-lg">
-              Manage and view your students.
-            </p>
+      <div className="space-y-4">
+        <DashboardBanner
+          badge="Your classroom"
+          title="Students"
+          description="Manage and view your students."
+        />
+
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <div className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 font-bold text-primary-foreground shadow-playful">
+            <Users className="size-4" />
+            <span>{pagination?.total ?? 0} students</span>
           </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-3">
-            <div className="inline-flex items-center gap-2 rounded-xl bg-primary-foreground/10 px-4 py-2.5 font-bold">
-              <Users className="size-4" />
-              <span>{pagination?.total ?? 0} students</span>
-            </div>
-            <RegisterStudentDialog />
-          </div>
+
+          <RegisterStudentDialog />
         </div>
-      </section>
+      </div>
 
       {/* Filters */}
       <Card className="border-2 border-border bg-card shadow-playful">
         <CardContent className="p-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
             <div className="relative w-full sm:min-w-[220px] sm:flex-1">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -127,66 +129,120 @@ export default function StudentsPage() {
               />
             </div>
 
-            <Select
-              value={gradeLevel}
-              onValueChange={(value) => {
-                if (value === null) return;
-                setGradeLevel(value);
-                setPage(1);
-              }}
-              disabled={true}
-            >
-              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All grades</SelectItem>
-                {Array.from({ length: 12 }, (_, index) => index + 1).map((grade) => (
-                  <SelectItem key={grade} value={String(grade)}>
-                    Grade {grade}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[150px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Grade</span>
+              <Select
+                value={gradeLevel}
+                onValueChange={(value) => {
+                  if (value === null) return;
+                  setGradeLevel(value);
+                  setPage(1);
+                }}
+                disabled={true}
+              >
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All grades" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All grades</SelectItem>
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((grade) => (
+                    <SelectItem key={grade} value={String(grade)}>
+                      Grade {grade}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select
-              value={section}
-              onValueChange={(value) => {
-                if (value === null) return;
-                setSection(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sections</SelectItem>
-                {["A", "B", "C", "D"].map((value) => (
-                  <SelectItem key={value} value={value}>
-                    Section {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[150px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Section</span>
+              <Select
+                value={section}
+                onValueChange={(value) => {
+                  if (value === null) return;
+                  setSection(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All sections" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All sections</SelectItem>
+                  {["A", "B", "C", "D"].map((value) => (
+                    <SelectItem key={value} value={value}>
+                      Section {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select
-              value={gender}
-              onValueChange={(value) => {
-                if (value === null) return;
-                setGender(value);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full rounded-xl border-border sm:w-[150px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All genders</SelectItem>
-                <SelectItem value="BOY">Boy</SelectItem>
-                <SelectItem value="GIRL">Girl</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[150px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Gender</span>
+              <Select
+                value={gender}
+                onValueChange={(value) => {
+                  if (value === null) return;
+                  setGender(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All genders" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All genders</SelectItem>
+                  <SelectItem value="BOY">Boy</SelectItem>
+                  <SelectItem value="GIRL">Girl</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[150px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Batch</span>
+              <Select
+                value={batch}
+                onValueChange={(value) => {
+                  if (value === null) return;
+                  setBatch(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All batches" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All batches</SelectItem>
+                  {[2023, 2024, 2025, 2026].map((value) => (
+                    <SelectItem key={value} value={String(value)}>
+                      Batch {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[150px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Status</span>
+              <Select
+                value={active}
+                onValueChange={(value) => {
+                  if (value === null) return;
+                  setActive(value);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <span>{getStatusLabel(active)}</span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All status</SelectItem>
+                  <SelectItem value="true">Active</SelectItem>
+                  <SelectItem value="false">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>

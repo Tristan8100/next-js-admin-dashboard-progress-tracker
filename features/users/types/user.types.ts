@@ -8,6 +8,8 @@ export interface Student {
   gradeLevel: number;
   section: string;
   gender: "BOY" | "GIRL" | null;
+  batch?: number;
+  active?: boolean;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
@@ -31,6 +33,8 @@ export interface StudentQuery {
   search?: string;
   gradeLevel?: number;
   section?: string;
+  batch?: number;
+  active?: boolean;
   page?: number;
   limit?: number;
   sortBy?:
@@ -54,6 +58,8 @@ export interface RegisterStudentRequest {
   gradeLevel: number;
   email?: string;
   gender: "BOY" | "GIRL";
+  batch?: number;
+  active?: boolean;
 }
 
 export interface UpdateStudentData {
@@ -63,6 +69,8 @@ export interface UpdateStudentData {
   gradeLevel?: number;
   section?: string;
   password?: string;
+  batch?: number;
+  active?: boolean;
 }
 
 export type MapProgress = {
@@ -101,6 +109,8 @@ export interface User {
   gradeLevel: number;
   section: string;
   gender: "BOY" | "GIRL" | null;
+  batch?: number;
+  active?: boolean;
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
@@ -113,6 +123,8 @@ export interface UpdateUserPayload {
   password?: string;
   gradeLevel?: number;
   section?: string;
+  batch?: number;
+  active?: boolean;
 }
 
 export type ProgressType =

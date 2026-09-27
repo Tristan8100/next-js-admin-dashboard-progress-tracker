@@ -10,7 +10,6 @@ import {
   GraduationCap,
   Loader2,
   PlayCircle,
-  Sparkles,
   Trophy,
   TrendingDown,
   Users,
@@ -50,6 +49,7 @@ import { Badge } from "@/components/ui/badge"
 
 import { getApiErrorMessage } from "@/lib/api-error"
 import { displayLevel } from "@/lib/progress"
+import DashboardBanner from "@/features/dashboard/components/dashboard-banner"
 
 const CHART_COLORS = [
   "var(--primary)",
@@ -67,15 +67,24 @@ const CHART_TOOLTIP_STYLE = {
   fontWeight: 600,
 }
 
+function getStatusLabel(value: string) {
+  if (value === "all") return "All status"
+  return value === "true" ? "Active" : "Inactive"
+}
+
 export default function AnalyticsPage() {
   const [gradeLevel, setGradeLevel] = useState<string>("all")
   const [section, setSection] = useState<string>("all")
+  const [batch, setBatch] = useState<string>("all")
+  const [active, setActive] = useState<string>("all")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
 
   const query = {
     ...(gradeLevel !== "all" ? { gradeLevel: Number(gradeLevel) } : {}),
     ...(section !== "all" ? { section } : {}),
+    ...(batch !== "all" ? { batch: Number(batch) } : {}),
+    ...(active !== "all" ? { active: active === "true" } : {}),
   }
 
   const { data, isLoading, isError, error } = useAnalytics(query)
@@ -92,17 +101,7 @@ export default function AnalyticsPage() {
     error: leaderboardError,
   } = useLeaderboard(leaderboardQuery)
 
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="grid size-16 place-items-center rounded-3xl bg-primary text-primary-foreground shadow-playful">
-          <Loader2 className="size-7 animate-spin" />
-        </div>
-      </div>
-    )
-  }
-
-  if (isError || !data) {
+  if (isError && !data) {
     return (
       <div className="mx-auto flex min-h-[400px] max-w-md flex-col items-center justify-center text-center">
         <div className="grid size-16 place-items-center rounded-3xl bg-destructive/10 text-destructive">
@@ -114,7 +113,19 @@ export default function AnalyticsPage() {
     )
   }
 
-  const { overview, studentsByGrade, studentsBySection, mapPerformance, activity } = data
+  const { overview, studentsByGrade, studentsBySection, mapPerformance, activity } = data ?? {
+    overview: {
+      totalStudents: 0,
+      startedStudents: 0,
+      activeStudents: 0,
+      totalCompleted: 0,
+      averageCompleted: 0,
+    },
+    studentsByGrade: [],
+    studentsBySection: [],
+    mapPerformance: [],
+    activity: [],
+  }
 
   const gradeChartData = studentsByGrade.map((grade) => ({
     label: `Grade ${grade.gradeLevel}`,
@@ -134,51 +145,80 @@ export default function AnalyticsPage() {
 
   return (
     <div className="space-y-7 pb-6">
-      <section className="relative overflow-hidden rounded-[2rem] border-2 border-border bg-primary px-6 py-8 text-primary-foreground shadow-playful-lg sm:px-9 sm:py-10">
-        <div className="absolute -right-8 -top-10 size-40 rounded-full bg-secondary/90" aria-hidden="true" />
-        <div className="absolute -bottom-16 right-24 size-32 rounded-full border-[18px] border-card/15" aria-hidden="true" />
-        <div className="relative">
-          <p className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em]">
-            <Sparkles className="size-3.5" /> Class insights
-          </p>
-          <h1 className="font-display mt-5 max-w-2xl text-balance text-4xl tracking-tight sm:text-5xl">Analytics</h1>
-          <p className="mt-3 max-w-xl text-base leading-7 text-primary-foreground/85 sm:text-lg">
-            Monitor student progress and performance.
-          </p>
-        </div>
-      </section>
+      <DashboardBanner
+        badge="Class insights"
+        title="Analytics"
+        description="Monitor student progress and performance."
+      />
 
       {/* Filters */}
       <Card className="border-2 border-border bg-card shadow-playful">
         <CardContent className="p-4">
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Select value={gradeLevel} onValueChange={(value) => setGradeLevel(value ?? "all")} disabled={true}> 
-              <SelectTrigger className="w-full rounded-xl border-border sm:w-[170px]">
-                <SelectValue placeholder="Grade level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All grades</SelectItem>
-                {Array.from({ length: 12 }, (_, index) => index + 1).map((grade) => (
-                  <SelectItem key={grade} value={String(grade)}>
-                    Grade {grade}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[170px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Grade</span>
+              <Select value={gradeLevel} onValueChange={(value) => setGradeLevel(value ?? "all")} disabled={true}>
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All grades" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All grades</SelectItem>
+                  {Array.from({ length: 12 }, (_, index) => index + 1).map((grade) => (
+                    <SelectItem key={grade} value={String(grade)}>
+                      Grade {grade}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select value={section} onValueChange={(value) => setSection(value ?? "all")}>
-              <SelectTrigger className="w-full rounded-xl border-border sm:w-[170px]">
-                <SelectValue placeholder="Section" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All sections</SelectItem>
-                {["A", "B", "C", "D"].map((value) => (
-                  <SelectItem key={value} value={value}>
-                    Section {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[170px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Section</span>
+              <Select value={section} onValueChange={(value) => setSection(value ?? "all")}>
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All sections" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All sections</SelectItem>
+                  {["A", "B", "C", "D"].map((value) => (
+                    <SelectItem key={value} value={value}>
+                      Section {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[170px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Batch</span>
+              <Select value={batch} onValueChange={(value) => setBatch(value ?? "all")}>
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <SelectValue placeholder="All batches" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All batches</SelectItem>
+                  {[2023, 2024, 2025, 2026].map((value) => (
+                    <SelectItem key={value} value={String(value)}>
+                      Batch {value}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex min-w-0 flex-col gap-1.5 sm:w-[170px]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Status</span>
+              <Select value={active} onValueChange={(value) => setActive(value ?? "all")}>
+                <SelectTrigger className="w-full rounded-xl border-border">
+                  <span>{getStatusLabel(active)}</span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All status</SelectItem>
+                  <SelectItem value="true">Active</SelectItem>
+                  <SelectItem value="false">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <Button
               variant="outline"
@@ -186,6 +226,8 @@ export default function AnalyticsPage() {
               onClick={() => {
                 setGradeLevel("all")
                 setSection("all")
+                setBatch("all")
+                setActive("all")
               }}
             >
               Clear filters
@@ -266,32 +308,45 @@ export default function AnalyticsPage() {
         </CardContent>
       </Card>
 
-      {/* Overview */}
-      <section aria-labelledby="overview-heading">
-        <div className="mb-4">
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ocean">Overview</p>
-          <h2 id="overview-heading" className="font-display mt-1 text-3xl tracking-tight text-navy">The big picture</h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <SummaryCard title="Total students" value={overview.totalStudents} icon={<Users className="size-5" />} color="bg-primary text-primary-foreground" />
-          <SummaryCard title="Started" value={overview.startedStudents} icon={<PlayCircle className="size-5" />} color="bg-secondary text-secondary-foreground" />
-          <SummaryCard title="Active students" value={overview.activeStudents} icon={<Activity className="size-5" />} color="bg-accent text-accent-foreground" />
-          <SummaryCard title="Total completed" value={overview.totalCompleted} icon={<CheckCircle2 className="size-5" />} color="bg-leaf text-primary-foreground" />
-        </div>
-      </section>
+      <div className="space-y-6">
+        {isLoading && !data ? (
+          <Card className="border-2 border-border bg-card shadow-playful">
+            <CardContent className="flex min-h-[180px] items-center justify-center gap-3">
+              <Loader2 className="size-5 animate-spin text-muted-foreground" />
+              <span className="text-sm font-medium text-muted-foreground">Loading analytics…</span>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {/* Overview */}
+            <section aria-labelledby="overview-heading">
+              <div className="mb-4">
+                <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ocean">Overview</p>
+                <h2 id="overview-heading" className="font-display mt-1 text-3xl tracking-tight text-navy">The big picture</h2>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <SummaryCard title="Total students" value={overview.totalStudents} icon={<Users className="size-5" />} color="bg-primary text-primary-foreground" />
+                <SummaryCard title="Started" value={overview.startedStudents} icon={<PlayCircle className="size-5" />} color="bg-secondary text-secondary-foreground" />
+                <SummaryCard title="Active students" value={overview.activeStudents} icon={<Activity className="size-5" />} color="bg-accent text-accent-foreground" />
+                <SummaryCard title="Total completed" value={overview.totalCompleted} icon={<CheckCircle2 className="size-5" />} color="bg-leaf text-primary-foreground" />
+              </div>
+            </section>
 
-      {/* Average Progress */}
-      <Card className="border-2 border-border bg-card shadow-playful">
-        <CardContent className="flex items-center gap-4 p-5">
-          <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-aqua text-ocean">
-            <GraduationCap className="size-5" />
-          </div>
-          <div>
-            <p className="font-display text-3xl leading-none tracking-tight text-navy">{overview.averageCompleted}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Average completed activities per student</p>
-          </div>
-        </CardContent>
-      </Card>
+            {/* Average Progress */}
+            <Card className="border-2 border-border bg-card shadow-playful">
+              <CardContent className="flex items-center gap-4 p-5">
+                <div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-aqua text-ocean">
+                  <GraduationCap className="size-5" />
+                </div>
+                <div>
+                  <p className="font-display text-3xl leading-none tracking-tight text-navy">{overview.averageCompleted}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">Average completed activities per student</p>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        )}
+      </div>
 
       {/* Students by Grade / Section */}
       <div className="grid gap-6 lg:grid-cols-2">

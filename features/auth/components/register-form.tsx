@@ -35,6 +35,7 @@ export default function RegisterForm() {
         email,
         username,
         password,
+        active: true,
       },
       {
         onSuccess: (data) => {

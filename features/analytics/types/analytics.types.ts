@@ -47,4 +47,6 @@ export interface AnalyticsResponse {
 export interface AnalyticsQuery {
   gradeLevel?: number;
   section?: string;
+  batch?: number;
+  active?: boolean;
 }

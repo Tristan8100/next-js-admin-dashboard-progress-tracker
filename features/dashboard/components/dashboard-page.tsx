@@ -9,7 +9,6 @@ import {
   Clock3,
   GraduationCap,
   Loader2,
-  Sparkles,
   Users,
 } from "lucide-react";
 
@@ -18,6 +17,7 @@ import { useVerifyUser } from "@/features/users/hooks/user-verify-user";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import DashboardBanner from "./dashboard-banner";
 
 export default function DashboardPage() {
   const { data: user, isLoading: userLoading, isError: userIsError, error: userError } = useVerifyUser();
@@ -39,14 +39,13 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-7 pb-6">
-      <section className="relative overflow-hidden rounded-[2rem] border-2 border-border bg-primary px-6 py-8 text-primary-foreground shadow-playful-lg sm:px-9 sm:py-10">
-        <div className="absolute -right-8 -top-10 size-40 rounded-full bg-secondary/90" aria-hidden="true" />
-        <div className="absolute -bottom-16 right-24 size-32 rounded-full border-[18px] border-card/15" aria-hidden="true" />
-        <div className="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div><p className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-[0.16em]"><Sparkles className="size-3.5" /> Your classroom mission</p><h1 className="font-display mt-5 max-w-2xl text-balance text-4xl tracking-tight sm:text-5xl">Hello, {teacherName}! Let&apos;s make today count.</h1><p className="mt-3 max-w-xl text-base leading-7 text-primary-foreground/85 sm:text-lg">Every small discovery moves your class forward. Here is the latest view of their science adventure.</p></div>
-          <Link href="/teacher/students" className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-card px-5 text-sm font-extrabold text-navy shadow-playful transition-colors hover:bg-secondary">View students <ArrowRight className="size-4" /></Link>
-        </div>
-      </section>
+      <DashboardBanner
+        badge="Your classroom mission"
+        title={`Hello, ${teacherName}! Let's make today count.`}
+        description="Every small discovery moves your class forward. Here is the latest view of their science adventure."
+        actionHref="/teacher/students"
+        actionLabel="View students"
+      />
 
       <section aria-labelledby="class-snapshot-heading">
         <div className="mb-4 flex items-end justify-between gap-4"><div><p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-ocean">Class snapshot</p><h2 id="class-snapshot-heading" className="font-display mt-1 text-3xl tracking-tight text-navy">Your learning crew</h2></div><p className="hidden text-sm font-bold text-muted-foreground sm:block">Updated with the latest discoveries</p></div>
