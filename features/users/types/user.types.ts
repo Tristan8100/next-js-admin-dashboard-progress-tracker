@@ -78,6 +78,13 @@ export type MapProgress = {
   level?: number;
   score?: number;
   date_acquired: string;
+  attempts?: ProgressAttempt[];
+};
+
+export type ProgressAttempt = {
+  attempt_time: string;
+  score?: number;
+  statusRetry?: boolean;
 };
 
 export type UserMap = {

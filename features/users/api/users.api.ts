@@ -57,11 +57,12 @@ export async function deleteUser(id: string) {
 }
 
 export async function getMyProgress(): Promise<MyProgressResponse> {
-  const response = await api.get<MyProgressResponse>(
+  const response = await api.get<MyProgressResponse | { userMaps?: MyProgressResponse }>(
     "/user-maps/my-progress",
   );
 
-  return response.data;
+  if (Array.isArray(response.data)) return response.data;
+  return Array.isArray(response.data.userMaps) ? response.data.userMaps : [];
 }
 
 export const getLeaderboard = async (

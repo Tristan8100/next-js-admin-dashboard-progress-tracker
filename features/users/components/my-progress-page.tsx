@@ -30,6 +30,11 @@ type ProgressEntry = {
   level?: number;
   score?: number;
   date_acquired: string;
+  attempts?: {
+    attempt_time: string;
+    score?: number;
+    statusRetry?: boolean;
+  }[];
 };
 
 type MapWithProgress = {
@@ -167,7 +172,9 @@ function MapProgressCard({ map }: { map: MapWithProgress }) {
   }, [map.progress]);
 
   const avgScore = useMemo(() => {
-    const scores = map.progress.filter((p) => p.score !== undefined).map((p) => p.score as number);
+    const scores = map.progress
+      .filter((p) => p.score !== undefined && p.score !== -1)
+      .map((p) => p.score as number);
     if (scores.length === 0) return null;
     return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   }, [map.progress]);
@@ -268,8 +275,9 @@ function MapProgressCard({ map }: { map: MapWithProgress }) {
                     {map.progress.map((progress, index) => (
                       <div
                         key={`${progress.type}-${progress.level ?? "none"}-${index}`}
-                        className="flex items-center gap-3 py-4 first:pt-2"
+                        className="py-4 first:pt-2"
                       >
+                        <div className="flex items-center gap-3">
                         <div className="grid size-10 shrink-0 place-items-center rounded-2xl bg-leaf/15 text-leaf">
                           <CheckCircle2 className="size-5" />
                         </div>
@@ -286,12 +294,43 @@ function MapProgressCard({ map }: { map: MapWithProgress }) {
                           </p>
                         </div>
                         <div className="shrink-0 text-right">
-                          {progress.score !== undefined ? (
+                          {progress.score !== undefined && progress.score !== -1 ? (
                             <Badge className="rounded-lg bg-primary/10 text-primary hover:bg-primary/10">{progress.score} pts</Badge>
                           ) : (
                             <p className="text-xs font-bold text-muted-foreground">No score</p>
                           )}
                         </div>
+                        </div>
+                        {progress.attempts && progress.attempts.length > 0 && (
+                          <details className="mt-3 ml-12 rounded-md border bg-background px-3 py-2">
+                            <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+                              Attempts ({progress.attempts.length})
+                            </summary>
+                            <div className="mt-2 space-y-2 border-l pl-3">
+                              {progress.attempts.map((attempt, attemptIndex) => (
+                                <div
+                                  key={`${attempt.attempt_time}-${attemptIndex}`}
+                                  className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+                                >
+                                  <span>
+                                    Attempt {attemptIndex + 1} · {new Date(attempt.attempt_time).toLocaleString()}
+                                  </span>
+                                  {attempt.score !== undefined && attempt.score !== -1 && (
+                                    <span>Score: {attempt.score}</span>
+                                  )}
+                                  {attempt.statusRetry !== undefined && (
+                                    <Badge
+                                      variant={attempt.statusRetry ? "destructive" : "secondary"}
+                                      className="px-1.5 py-0 text-[10px]"
+                                    >
+                                      {attempt.statusRetry ? "Retry" : "Not a retry"}
+                                    </Badge>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </details>
+                        )}
                       </div>
                     ))}
                   </div>

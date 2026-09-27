@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 import { useStudentProgress } from "../hooks/use-student-progress";
-import type { UserMap } from "../types/user.types";
+import type { MapProgress } from "../types/user.types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -67,29 +67,7 @@ export default function StudentProgressPage({
     );
   }
 
-  const normalizeStudentMaps = (value: unknown): UserMap[] => {
-    if (Array.isArray(value)) {
-      return value as UserMap[];
-    }
-
-    if (value && typeof value === "object") {
-      const maybe = value as {
-        data?: unknown;
-        maps?: unknown;
-        studentMaps?: unknown;
-        userMaps?: unknown;
-      };
-
-      if (Array.isArray(maybe.data)) return maybe.data as UserMap[];
-      if (Array.isArray(maybe.maps)) return maybe.maps as UserMap[];
-      if (Array.isArray(maybe.studentMaps)) return maybe.studentMaps as UserMap[];
-      if (Array.isArray(maybe.userMaps)) return maybe.userMaps as UserMap[];
-    }
-
-    return [];
-  };
-
-  const studentMaps = normalizeStudentMaps(maps);
+  const studentMaps = maps ?? [];
 
   const totalProgress = studentMaps.reduce<number>(
     (total: number, map) =>
@@ -105,12 +83,7 @@ export default function StudentProgressPage({
       total +
       (Array.isArray(map.progress)
         ? map.progress.filter(
-            (item: {
-              type: "level" | "tutorial" | "knowledge_check";
-              level?: number;
-              score?: number;
-              date_acquired: string;
-            }) => item?.type === "level",
+            (item: MapProgress) => item?.type === "level",
           ).length
         : 0),
     0,
@@ -121,12 +94,7 @@ export default function StudentProgressPage({
       total +
       (Array.isArray(map.progress)
         ? map.progress.filter(
-            (item: {
-              type: "level" | "tutorial" | "knowledge_check";
-              level?: number;
-              score?: number;
-              date_acquired: string;
-            }) =>
+            (item: MapProgress) =>
               item?.type === "knowledge_check",
           ).length
         : 0),
@@ -296,10 +264,8 @@ export default function StudentProgressPage({
                               (b.level ?? 0),
                           )
                           .map((progress, index) => (
-                              <div
-                                key={`${progress.type}-${progress.level}-${index}`}
-                                className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2"
-                              >
+                            <div key={`${progress.type}-${progress.level}-${index}`}>
+                              <div className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2">
                                 <div className="flex items-center gap-3">
                                   <CheckCircle2 className="size-4 text-muted-foreground" />
 
@@ -322,8 +288,7 @@ export default function StudentProgressPage({
                                   </div>
                                 </div>
 
-                                {progress.score !==
-                                  undefined && (
+                                {progress.score !== undefined && progress.score !== -1 && (
                                   <Badge variant="outline">
                                     Score:{" "}
                                     {
@@ -332,6 +297,34 @@ export default function StudentProgressPage({
                                   </Badge>
                                 )}
                               </div>
+                              {progress.attempts && progress.attempts.length > 0 && (
+                                <details className="ml-7 mt-2 rounded-md border bg-background px-3 py-2">
+                                  <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+                                    Attempts ({progress.attempts.length})
+                                  </summary>
+                                  <div className="mt-2 space-y-1.5 border-l pl-3">
+                                    {progress.attempts.map((attempt, attemptIndex) => (
+                                      <div
+                                        key={`${attempt.attempt_time}-${attemptIndex}`}
+                                        className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground"
+                                      >
+                                        <span>
+                                          Attempt {attemptIndex + 1} · {new Date(attempt.attempt_time).toLocaleString()}
+                                        </span>
+                                        {attempt.score !== undefined && attempt.score !== -1 && (
+                                          <span>Score: {attempt.score}</span>
+                                        )}
+                                        {attempt.statusRetry !== undefined && (
+                                          <Badge variant={attempt.statusRetry ? "destructive" : "secondary"} className="px-1.5 py-0 text-[10px]">
+                                            {attempt.statusRetry ? "Retry" : "Not a retry"}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                </details>
+                              )}
+                            </div>
                             ),
                           )}
                       </div>
