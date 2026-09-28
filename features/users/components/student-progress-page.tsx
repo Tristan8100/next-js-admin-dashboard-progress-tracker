@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { displayLevel } from "@/lib/progress";
+import { addDesc } from "@/lib/helpers/level-mapping-desc";
 
 type Props = {
   studentId: string;
@@ -271,15 +271,16 @@ export default function StudentProgressPage({
 
                                   <div>
                                     <p className="text-sm font-medium">
-                                      {progress.type ===
-                                      "level"
-                                        ? `Level ${progress.level !== undefined ? displayLevel(progress.level) : ''}`
-                                        : progress.type ===
-                                            "tutorial"
-                                          ? `Tutorial ${progress.level !== undefined ? displayLevel(progress.level) : ''}`
-                                          : `Knowledge Check ${progress.level !== undefined ? displayLevel(progress.level) : ''}`}
+                                      {progress.type === "knowledge_check"
+                                        ? "Knowledge Check"
+                                        : progress.type === "tutorial"
+                                          ? "Tutorial"
+                                          : "Level"}{progress.level !== undefined ? ` ${progress.level + 1}` : ""}
                                     </p>
 
+                                    <p className="text-xs text-muted-foreground">
+                                      {addDesc(progress.type, progress.level)}
+                                    </p>
                                     <p className="text-xs text-muted-foreground">
                                       {new Date(
                                         progress.date_acquired,

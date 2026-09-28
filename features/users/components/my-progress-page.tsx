@@ -14,7 +14,7 @@ import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 import { useMyProgress } from "../hooks/use-my-progress";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { displayLevel } from "@/lib/progress";
+import { addDesc } from "@/lib/helpers/level-mapping-desc";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -283,8 +283,9 @@ function MapProgressCard({ map }: { map: MapWithProgress }) {
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate font-bold text-navy">{formatProgressType(progress.type)}</p>
+                          <p className="text-xs text-muted-foreground">{addDesc(progress.type, progress.level)}</p>
                           <p className="mt-0.5 text-sm text-muted-foreground">
-                            {progress.level !== undefined ? `Level ${displayLevel(progress.level)}` : "Completed"}
+                            {progress.level !== undefined ? `Level ${progress.level + 1}` : "Completed"}
                             <span aria-hidden="true"> · </span>
                             {new Date(progress.date_acquired).toLocaleDateString(undefined, {
                               month: "short",

@@ -48,7 +48,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 
 import { getApiErrorMessage } from "@/lib/api-error"
-import { displayLevel } from "@/lib/progress"
+import { addDesc } from "@/lib/helpers/level-mapping-desc"
 import DashboardBanner from "@/features/dashboard/components/dashboard-banner"
 
 const CHART_COLORS = [
@@ -540,9 +540,9 @@ export default function AnalyticsPage() {
                     <div className="text-right">
                       <p className="text-sm font-bold text-navy">{item.map_name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {item.type.replace("_", " ")}
-                        {item.level !== undefined && ` · Level ${displayLevel(item.level)}`}
+                        {item.type.replace("_", " ")}{item.level !== undefined ? ` · Level ${item.level + 1}` : ""}
                       </p>
+                      <p className="text-xs text-muted-foreground">{addDesc(item.type, item.level)}</p>
                     </div>
                     {item.score !== undefined && (
                       <Badge className="rounded-lg bg-primary/10 text-primary hover:bg-primary/10">{item.score} pts</Badge>
