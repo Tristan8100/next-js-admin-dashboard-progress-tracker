@@ -636,7 +636,12 @@ function LeaderboardList({
               </div>
 
               <div className="shrink-0 text-right">
-                <p className="text-sm font-bold text-navy">{entry.totalScore} pts</p>
+                <p className="text-sm font-bold text-navy">{entry.finalScore} pts</p>
+                
+                  <p className="text-xs text-muted-foreground">
+                    {entry.totalScore} score − {entry.retryCount} {entry.retryCount === 1 ? "retry" : "retries"}
+                  </p>
+                
                 <p className="text-xs text-muted-foreground">
                   {entry.levelsCompleted} completed · {entry.scoreRate}%
                 </p>

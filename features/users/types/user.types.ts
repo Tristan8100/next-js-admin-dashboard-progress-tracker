@@ -175,6 +175,8 @@ export interface LeaderboardEntry {
   section: string;
   totalScore: number;
   levelsCompleted: number;
+  retryCount: number;
+  finalScore: number;
   scoreRate: number;
   lastActivity: LeaderboardLastActivity;
 }
