@@ -126,3 +126,43 @@ export function addDesc(
 
   return entry?.description || DESCRIPTION_FALLBACK;
 }
+
+/**
+ * Returns the actual display level number (resetting to 1 for each new section/map).
+ * 
+ * Usage: displayActualLevel(data.type, data.level)
+ */
+export function displayActualLevel(
+  type: string,
+  index: number | string | undefined | null,
+): number {
+  if (index === undefined || index === null) {
+    return 1;
+  }
+
+  const idx = Number(index);
+  if (isNaN(idx)) {
+    return 1;
+  }
+
+  switch (type) {
+    case 'level':
+      // Main levels reset every 10 items (0-9, 10-19, 20-29, 30-39) -> 1 to 10
+      return (idx % 10) + 1;
+
+    case 'knowledge_check':
+      // Knowledge checks reset every 2 items (pre-test/post-test per section) -> 1 or 2
+      return (idx % 2) + 1;
+
+    case 'tutorial':
+      // Tutorials have section-specific lengths (Materials/Living have 4, Force/Earth have 3)
+      if (idx >= 0 && idx <= 3) return idx + 1;       // Materials (0-3) -> 1 to 4
+      if (idx >= 4 && idx <= 7) return idx - 3;       // Living (4-7) -> 1 to 4
+      if (idx >= 8 && idx <= 10) return idx - 7;      // Force (8-10) -> 1 to 3
+      if (idx >= 11 && idx <= 13) return idx - 10;    // Earth (11-13) -> 1 to 3
+      return idx + 1;
+
+    default:
+      return idx + 1;
+  }
+}
