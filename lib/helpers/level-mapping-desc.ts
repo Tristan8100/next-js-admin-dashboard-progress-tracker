@@ -71,23 +71,23 @@ export const PROGRESS_DESCRIPTIONS: ProgressDescriptions = {
 
   tutorial: {
     // materials (0-3)
-    '0': { description: 'tutorial (drag and drop all 3 solid)' },
-    '1': { description: 'matter 1/video lesson 1' },
-    '2': { description: 'matter 2/video lesson 2' },
-    '3': { description: 'matter 3/video lesson 3' },
+    '0': { description: 'Video: matter 1/video lesson 1'},
+    '1': { description: 'tutorial (drag and drop all 3 solid)' },
+    '2': { description: 'Video: matter 2/video lesson 2' },
+    '3': { description: 'Video: matter 3/video lesson 3' },
     // living (4-7)
-    '4': { description: 'tutorial (find and select 3 living things)' },
-    '5': { description: 'living and non living 1/video lesson 1' },
-    '6': { description: 'living and non living 2/video lesson 2' },
-    '7': { description: 'living and non living 3/video lesson 3' },
+    '4': { description: 'Video: living and non living 1/video lesson 1' },
+    '5': { description: 'tutorial (find and select 3 living things)' },
+    '6': { description: 'Video: living and non living 2/video lesson 2' },
+    '7': { description: 'Video: living and non living 3/video lesson 3' },
     // force (8-10)
-    '8': { description: 'tutorial (which type of force or energy is used)' },
-    '9': { description: 'force and motion 1/video lesson 1' },
-    '10': { description: 'force and motion 2/video lesson 2' },
+    '8': { description: 'Video: force and motion 1/video lesson 1' },
+    '9': { description: 'tutorial (which type of force or energy is used)' },
+    '10': { description: 'Video: force and motion 2/video lesson 2' },
     // earth (11-13)
-    '11': { description: 'tutorial (drag the outfit)' },
-    '12': { description: 'earth and space 1/video lesson 1' },
-    '13': { description: 'earth and space 2/video lesson 2' },
+    '11': { description: 'Video: earth and space 1/video lesson 1' },
+    '12': { description: 'tutorial (drag the outfit)' },
+    '13': { description: 'Video: earth and space 2/video lesson 2' },
   },
 
   knowledge_check: {
