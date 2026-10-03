@@ -308,7 +308,7 @@ export default function ProfilePage({
             )}
 
             {updateMutation.isSuccess && (
-              <p className="text-sm text-green-600">
+              <p className="text-sm text-accent">
                 Profile updated successfully.
               </p>
             )}

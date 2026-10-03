@@ -44,7 +44,7 @@ export default function Page() {
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-extrabold text-ocean shadow-playful">
             <span className="size-2 rounded-full bg-leaf" aria-hidden="true" /> Built for curious minds
           </div>
-          <h1 className="font-display max-w-2xl text-balance text-5xl leading-[0.98] tracking-[-0.04em] text-navy sm:text-7xl">Every student has a <span className="text-primary">science story</span> to explore.</h1>
+          <h1 className="font-display max-w-2xl text-balance text-5xl leading-[0.98] tracking-[-0.04em] text-foreground sm:text-7xl">Every student has a <span className="text-accent">science story</span> to explore.</h1>
           <p className="mt-7 max-w-xl text-pretty text-lg leading-8 text-muted-foreground sm:text-xl">SciPlay turns science learning into a colorful game map—and gives teachers a clear view of every discovery, milestone, and moment of progress.</p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Button size="lg" nativeButton={false} className="h-12 rounded-xl px-6 text-base font-extrabold shadow-playful" render={<a href={gameDownloadUrl} />}>Download game</Button>
@@ -61,7 +61,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section id="progress" className="border-y border-border bg-aqua px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
+      <section id="progress" className="border-y border-border bg-primary px-5 py-20 sm:px-8 lg:px-10 lg:py-24">
         <div className="mx-auto max-w-7xl"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:items-end"><div><p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-ocean">The progress view</p><h2 className="font-display mt-4 max-w-xl text-balance text-4xl tracking-tight text-navy sm:text-5xl">From first question to big <span className="text-coral">breakthrough.</span></h2></div><p className="max-w-xl text-lg leading-8 text-muted-foreground">Teachers get a friendly command center for the whole class. No spreadsheets, no guesswork—just a living map of where every learner is headed next.</p></div>
           <div className="mt-12 grid gap-5 md:grid-cols-3">{features.map((feature) => <article key={feature.number} className="rounded-3xl border-2 border-border bg-card p-6 shadow-playful"><div className={`grid size-12 place-items-center rounded-2xl ${feature.color} font-mono font-bold text-primary-foreground`}>{feature.number}</div><h3 className="font-display mt-6 text-2xl text-navy">{feature.title}</h3><p className="mt-3 leading-7 text-muted-foreground">{feature.description}</p></article>)}</div>
         </div>

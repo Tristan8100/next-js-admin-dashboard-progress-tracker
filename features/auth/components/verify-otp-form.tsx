@@ -136,7 +136,7 @@ export default function VerifyOtpForm() {
             )}
 
             {sendOtpMutation.isSuccess && (
-              <p className="text-sm text-green-600">
+              <p className="text-sm text-accent">
                 A new OTP has been sent to your email.
               </p>
             )}
