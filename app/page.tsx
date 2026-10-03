@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import ThemeToggle from '@/components/ui/theme-toggle'
 
 const heroImage = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/homepage-1sCnoKooo5t6Ju5TSQ3RwSKLXErPaD.png'
 const mapImage = 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/material%20map-HAXgKHq2suaMWxwpkcFCmfm2qhS8S2.png'
@@ -32,7 +33,10 @@ export default function Page() {
           <Button size="lg" className="rounded-xl shadow-playful"><a href="#start">Get started</a></Button>
           <Button size="lg" className="rounded-xl shadow-playful"><a href="/auth/login">Log in</a></Button>
         </nav>
-        <button type="button" className="rounded-xl border border-border bg-card px-3 py-2 text-sm font-bold md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle navigation">Menu</button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button type="button" className="rounded-xl border border-border bg-card px-3 py-2 text-sm font-bold md:hidden" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label="Toggle navigation">Menu</button>
+        </div>
       </header>
 
       <section id="top" className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-8 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10 lg:pb-28 lg:pt-16">

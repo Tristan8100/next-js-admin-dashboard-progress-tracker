@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { AccountMenu } from "@/features/auth/components/account-menu"
+import ThemeToggle from "@/components/ui/theme-toggle"
 
 const NAV_ITEMS = [
   {
@@ -118,6 +119,7 @@ function TopNav() {
 
         {/* Right: Account menu */}
         <div className="flex items-center justify-end gap-2">
+          <ThemeToggle />
           <AccountMenu settingsHref="/teacher/settings" />
         </div>
       </div>

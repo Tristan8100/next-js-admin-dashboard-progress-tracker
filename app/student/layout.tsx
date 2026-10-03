@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/features/auth/hooks/use-auth"
 import { AccountMenu } from "@/features/auth/components/account-menu"
+import ThemeToggle from "@/components/ui/theme-toggle"
 
 const NAV_ITEMS = [
   {
@@ -103,6 +104,7 @@ function TopNavStudent() {
         </nav>
 
         <div className="flex items-center justify-end">
+          <ThemeToggle className="mr-3" />
           <AccountMenu settingsHref="/student/settings" />
         </div>
       </div>
